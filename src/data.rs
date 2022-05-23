@@ -11,8 +11,8 @@ pub struct BookData {
     pub price: Decimal,
     pub publisher: String,
     pub series: String,
-    pub year: i32,
-    pub pages: i32,
+    pub year: i16,
+    pub pages: i16,
     /// Cover type (hardcover, softcover, etc.)
     pub cover: String,
     /// URL pointing at the store page to buy the book.
