@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+	<title>Tania Książka Book Scrapper</title>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<meta name="author" content="">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="shortcut icon" type="image/ico" href="img/book.ico" />
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="main.css">
+</head>
+
+<body>
+
+	<header>
+
+		<nav class="navbar navbar-light bg-dark">
+			<span class="navbar-brand my-auto h1 p-4 text-light">Tania Książka Book Scrapper</span>
+		</nav>
+		<div style="background-color: #212121; padding: 20px;"></div>
+
+	</header>
+
+	<main>
+
+		<div class="container p-0 m-0">
+
+			<section class='row' style="background-color: #f1f1f1;">
+
+				<div class="col-7 ml-5">
+
+					<form>
+
+						<div style="margin-bottom: 20px; margin-top: 20px;" class="row ml-3">
+
+							<div class="row col-12 p-0 mb-3" style="text-align: center;">
+
+								<div class="searchProduct">
+
+									<i class="fa fa-search" style="font-size:25px; margin: 12px;"></i>
+
+									<input id="productPlaceholder" type="text" class="form-control form-control-sm"
+										placeholder="Podaj nazwę produktu" aria-label="product"
+										aria-describedby="basic-addon2">
+
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="my-2" style="display: flex;">
+									<label for="rate" style="margin-top: 11px; width: 50%; margin-left: 5px;">Cena
+										od:</label>
+									<input type="number" id="rate" name="rate">
+
+									<label for="rate2" style="margin-top: 11px;">do:</label>
+									<input type="number" id="rate2" name="rate2">
+
+								</div>
+
+								<div class="mx-3 my-2">
+
+									<label for="sort">Sortuj według:</label>
+
+									<select name="sort" id="sort">
+										<option value="alfabet">Alfabetycznie A-Z</option>
+										<option value="cenaros">Cena rosnąco</option>
+										<option value="cenamal">Cena malejąco</option>
+										<option value="popularność">Popularność</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="my-2">
+									<label class="buttonCheckbox">
+										<span type="button" class="btn px-1 py-0">Tylko dostępne:</span>
+										<input type="checkbox" name="flag">
+									</label>
+								</div>
+
+								<div class="my-2">
+									<button id="filter" type="button" class="btn pt-2 pb-2 button">Filtruj</button>
+								</div>
+							</div>
+
+						</div>
+
+					</form>
+
+					<div class="scrollarea">
+						<div class="row ml-5">
+
+							<article class=" mt-4 mb-4 row">
+								<button type="button" class='row'>
+									<div class="col-1">
+										<img class="w-100" src="img/example.png"></img>
+									</div>
+
+									<div class="col-8 m-auto">
+										<h5 style="font-weight: 600;">LOREM IPSUM DOLOR SIT AMET</h5>
+
+										<p style="font-size:13; font-weight: 400;">In cursus nisi a hendrerit aliquam.
+											Duis ipsum enim, pretium at felis quis, elementum tristique augue. Aenean
+											porta dignissim egestas. Suspendisse ut lacinia nunc, quis porta nulla.</p>
+									</div>
+
+									<div class="col-3 m-auto price">
+										<h5>€84,34</h5>
+										<p style="color: #12D251">Dostępny</p>
+									</div>
+								</button>
+								<div class="divider mt-4"></div>
+
+							</article>
+
+						</div>
+
+						<div class="row ml-5">
+
+							<article class=" mt-4 mb-4 row">
+								<button type="button" class='row'>
+									<div class="col-1">
+										<img class="w-100" src="img/example.png"></img>
+									</div>
+
+									<div class="col-8 m-auto">
+										<h5 style="font-weight: 600;">LOREM IPSUM DOLOR SIT AMET</h5>
+
+										<p style="font-size:13; font-weight: 400;">In cursus nisi a hendrerit aliquam.
+											Duis ipsum enim, pretium at felis quis, elementum tristique augue. Aenean
+											porta dignissim egestas. Suspendisse ut lacinia nunc, quis porta nulla.</p>
+									</div>
+
+									<div class="col-3 m-auto price">
+										<h5>€84,34</h5>
+										<p style="color: #E13521">Niedostępny</p>
+									</div>
+								</button>
+								<div class="divider mt-4"></div>
+
+							</article>
+						</div>
+
+						<div class="row ml-5">
+
+							<article class=" mt-4 mb-4 row">
+								<button type="button" class='row'>
+									<div class="col-1">
+										<img class="w-100" src="img/example.png"></img>
+									</div>
+
+									<div class="col-8 m-auto">
+										<h5 style="font-weight: 600;">LOREM IPSUM DOLOR SIT AMET</h5>
+
+										<p style="font-size:13; font-weight: 400;">In cursus nisi a hendrerit aliquam.
+											Duis ipsum enim, pretium at felis quis, elementum tristique augue. Aenean
+											porta dignissim egestas. Suspendisse ut lacinia nunc, quis porta nulla.</p>
+									</div>
+
+									<div class="col-3 m-auto price">
+										<h5>€84,34</h5>
+										<p style="color: #E13521">Niedostępny</p>
+									</div>
+								</button>
+								<div class="divider mt-4"></div>
+
+							</article>
+						</div>
+					</div>
+				</div>
+
+				<div class='col-4 mx-auto infoarea'>
+
+					<h5>LOREM IPSUM DOLOR SIT AMET</h5>
+
+					<div class="divider my-3"></div>
+
+					<div class='row'>
+
+						<div class="col-3 m-auto">
+							<img class="w-100" src="img/example.png"></img>
+						</div>
+
+						<div class="col-5 row m-auto">
+							<div class='col-3 mr-5'>
+								<div class='row'>
+									<p>Cena:</p>
+								</div>
+								<div class='row'>
+									<p>Ocena:</p>
+								</div>
+								<div class='row'>
+									<p>Wydawnictwo:</p>
+								</div>
+							</div>
+
+							<div class='col-2 ml-5'>
+								<div class='row'>
+									<h6 class='value'>€84,34</h6>
+								</div>
+								<div class='row'>
+									<h6 class='value'>86,34</h6>
+								</div>
+								<div class='row'>
+									<h6 class='value'>Lorem</h6>
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+
+					<div class="divider my-3"></div>
+
+					<div class='row mx-auto'>
+						<div class="col-4 m-auto p-auto">
+							<div class='row'>
+								<p>Autor:</p>
+							</div>
+							<div class='row'>
+								<p>Data premiery:</p>
+							</div>
+							<div class='row'>
+								<p>Liczba stron:</p>
+							</div>
+							<div class='row'>
+								<p>Okładka:</p>
+							</div>
+							<div class='row'>
+								<p>Język:</p>
+							</div>
+						</div>
+
+						<div class="col-3 m-auto p-auto">
+							<div class='row'>
+								<h6 class='value'>Jan Kowalski</h6>
+							</div>
+							<div class='row'>
+								<h6 class='value'>2021-03-17</h6>
+							</div>
+							<div class='row'>
+								<h6 class='value'>245</h6>
+							</div>
+							<div class='row'>
+								<h6 class='value'>Twarda</h6>
+							</div>
+							<div class='row'>
+								<h6 class='value'>Polski</h6>
+							</div>
+						</div>
+					</div>
+
+					<p class='availability' style="color: #E13521">Niedostępny</p>
+
+					<div class="mt-4 row">
+						<button href='#' type="button" class="btn pt-2 pb-2 button mx-auto">Przejdź do strony w
+							sklepie</button>
+					</div>
+
+				</div>
+
+			</section>
+
+		</div>
+	</main>
+
+	<footer class="font-small page-footer">
+
+		<div class="container-fluid text-center text-md-left">
+
+			<!-- Grid row -->
+			<div class="row align-items-center justify-content-around pt-3 ">
+
+				<!-- Grid column -->
+				<div class="col-md-auto mt-5">
+
+					<h4 class="font-weight-bold text-uppercase mt-3 mb-4">Nasz projekt TANIA KSIĄŻKA BOOK SCRAPPER</h4>
+
+					<h5 class="font-weight-bold text-uppercase mt-3 mb-4">Grupa projektowa - Not Found</h5>
+
+				</div>
+				<!-- Grid column -->
+
+
+				<!-- Grid column -->
+				<div class="col-md-2 pb-3 book">
+
+					<img src="img/book.png" style="width: 120%; margin-left:-25px;">
+
+				</div>
+				<!-- Grid column -->
+
+			</div>
+			<!-- Grid row -->
+
+		</div>
+
+		<!-- Copyright -->
+		<div style="font-size: 9px; color: grey;" class="footer-copyright text-center py-3">© 2022 Copyright
+			<a style="color: grey;" href="index.html"> Grupa projektowa - Not Found.</a> All rights reserved.
+		</div>
+		<!-- Copyright -->
+
+	</footer>
+
+	<script src="https://kit.fontawesome.com/e6c92d3f6a.js" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+		integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+		crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+		crossorigin="anonymous"></script>
+</body>
+
+</html>
