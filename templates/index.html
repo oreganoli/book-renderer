@@ -104,7 +104,8 @@
 									<div class="col-8 m-auto">
 										<h5 style="font-weight: 600;">{{book.data.title}}</h5>
 
-										<p style="font-size:13; font-weight: 400;">{{book.description}}</p>
+										<p style="font-size:13; font-weight: 400;">{{book.description}}{% if book.link
+											%}; Link: <a href="{{book.link}}">{{book.link}}</a>{% endif %}</p>
 									</div>
 
 									<div class="col-3 m-auto price">
