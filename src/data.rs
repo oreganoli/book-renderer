@@ -37,6 +37,8 @@ fn hyphenize_empty(string: &str) -> String {
 }
 impl From<BookData> for Book {
     fn from(data: BookData) -> Self {
+        let mut data = data;
+        data.price.set_scale(2).unwrap();
         let available = data.price != Decimal::NEGATIVE_ONE;
         let description = {
             let price_text = if data.price == Decimal::NEGATIVE_ONE {
