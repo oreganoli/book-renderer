@@ -58,68 +58,68 @@ async fn serve_index(
 #[tokio::main]
 async fn main() {
     // Create some bogus data.
-    let books = vec![
-        BookData {
-            author: "Terry Pratchett".into(),
-            title: "Wintersmith".into(),
-            cover: "soft".into(),
-            pages: 262,
-            price: 29.90,
-            publisher: "Prószyński i S-ka".into(),
-            year: 2006,
-            series: "Tiffany Aching".into(),
-            shop_url: "http://example.com/1".into(),
-        },
-        BookData {
-            author: "Terry Pratchett".into(),
-            title: "I Shall Wear Midnight".into(),
-            cover: "soft".into(),
-            pages: 300,
-            price: 29.97,
-            publisher: "Prószyński i S-ka".into(),
-            year: 2010,
-            series: "Tiffany Aching".into(),
-            shop_url: "http://example.com/2".into(),
-        },
-        BookData {
-            author: "Invalid Author".into(),
-            title: "Ayy Lmao".into(),
-            cover: "soft".into(),
-            pages: -1,
-            price: 29.97,
-            publisher: "Prószyński i S-ka".into(),
-            year: 2010,
-            series: "Placeholder Series".into(),
-            shop_url: "http://example.com/2".into(),
-        },
-        BookData {
-            author: "Invalid Author".into(),
-            title: "Jajco".into(),
-            cover: "soft".into(),
-            pages: 2,
-            price: -1.0,
-            publisher: "Prószyński i S-ka".into(),
-            year: 2010,
-            series: "".into(),
-            shop_url: "http://example.com/2".into(),
-        },
-        BookData {
-            author: "Invalid Author".into(),
-            title: "Jajco 2".into(),
-            cover: "soft".into(),
-            pages: 2,
-            price: 1.56,
-            publisher: "Prószyński i S-ka".into(),
-            year: -1,
-            series: "".into(),
-            shop_url: "http://example.com/2".into(),
-        },
-    ]
-    .into_iter()
-    .map(|book_data| Book::from(book_data))
-    .collect::<Vec<_>>();
-    let mut context = Context::new();
-    context.insert("books", &books);
+    // let books = vec![
+    //     BookData {
+    //         author: "Terry Pratchett".into(),
+    //         title: "Wintersmith".into(),
+    //         cover: "soft".into(),
+    //         pages: 262,
+    //         price: 29.90,
+    //         publisher: "Prószyński i S-ka".into(),
+    //         year: 2006,
+    //         series: "Tiffany Aching".into(),
+    //         shop_url: "http://example.com/1".into(),
+    //     },
+    //     BookData {
+    //         author: "Terry Pratchett".into(),
+    //         title: "I Shall Wear Midnight".into(),
+    //         cover: "soft".into(),
+    //         pages: 300,
+    //         price: 29.97,
+    //         publisher: "Prószyński i S-ka".into(),
+    //         year: 2010,
+    //         series: "Tiffany Aching".into(),
+    //         shop_url: "http://example.com/2".into(),
+    //     },
+    //     BookData {
+    //         author: "Invalid Author".into(),
+    //         title: "Ayy Lmao".into(),
+    //         cover: "soft".into(),
+    //         pages: -1,
+    //         price: 29.97,
+    //         publisher: "Prószyński i S-ka".into(),
+    //         year: 2010,
+    //         series: "Placeholder Series".into(),
+    //         shop_url: "http://example.com/2".into(),
+    //     },
+    //     BookData {
+    //         author: "Invalid Author".into(),
+    //         title: "Jajco".into(),
+    //         cover: "soft".into(),
+    //         pages: 2,
+    //         price: -1.0,
+    //         publisher: "Prószyński i S-ka".into(),
+    //         year: 2010,
+    //         series: "".into(),
+    //         shop_url: "http://example.com/2".into(),
+    //     },
+    //     BookData {
+    //         author: "Invalid Author".into(),
+    //         title: "Jajco 2".into(),
+    //         cover: "soft".into(),
+    //         pages: 2,
+    //         price: 1.56,
+    //         publisher: "Prószyński i S-ka".into(),
+    //         year: -1,
+    //         series: "".into(),
+    //         shop_url: "http://example.com/2".into(),
+    //     },
+    // ]
+    // .into_iter()
+    // .map(|book_data| Book::from(book_data))
+    // .collect::<Vec<_>>();
+    // let mut context = Context::new();
+    // context.insert("books", &books);
 
     // Create Tera template engine.
     let tera = match Tera::new("templates/**/*") {

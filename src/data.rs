@@ -1,3 +1,4 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
@@ -7,7 +8,7 @@ pub struct BookData {
     // Self-explanatory.
     pub title: String,
     pub author: String,
-    pub price: f64,
+    pub price: Decimal,
     pub publisher: String,
     pub series: String,
     pub year: i32,
@@ -36,9 +37,9 @@ fn hyphenize_empty(string: &str) -> String {
 }
 impl From<BookData> for Book {
     fn from(data: BookData) -> Self {
-        let available = data.price != -1.0;
+        let available = data.price != Decimal::NEGATIVE_ONE;
         let description = {
-            let price_text = if data.price == -1.0 {
+            let price_text = if data.price == Decimal::NEGATIVE_ONE {
                 "-".to_string()
             } else {
                 data.price.to_string().replace(".", ",") // European decimals
