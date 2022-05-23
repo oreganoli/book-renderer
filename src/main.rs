@@ -4,9 +4,10 @@ use axum::{
     http::{header, HeaderValue, Response, StatusCode},
     response::{Html, IntoResponse},
     routing::get,
-    Router,
+    Extension, Router,
 };
 use include_dir::{include_dir, Dir};
+use tera::Tera;
 
 // Static file serving.
 static STATICS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/static/");
@@ -30,15 +31,30 @@ async fn serve_statics(Path(path): Path<String>) -> impl IntoResponse {
     }
 }
 
-async fn serve_index() -> Html<&'static str> {
-    Html(include_str!("../templates/index.html"))
+async fn serve_index(Extension(renderer): Extension<Tera>) -> impl IntoResponse {
+    let html_string = renderer
+        .render("index.html", &tera::Context::new())
+        .unwrap_or(
+            "<h1>ERROR</h1><p>Error rendering HTML template. Consult main.rs.</p>".to_string(),
+        );
+    Html(html_string)
 }
 
 #[tokio::main]
 async fn main() {
+    // Create Tera template engine.
+    let tera = match Tera::new("templates/**/*") {
+        Ok(t) => t,
+        Err(e) => {
+            println!("Parsing error(s): {}", e);
+            ::std::process::exit(1);
+        }
+    };
+    // Create Axum web app.
     let app = Router::new()
         .route("/", get(serve_index))
-        .route("/static/*path", get(serve_statics));
+        .route("/static/*path", get(serve_statics))
+        .layer(Extension(tera));
     axum::Server::bind(
         &"127.0.0.1:8080"
             .parse()
