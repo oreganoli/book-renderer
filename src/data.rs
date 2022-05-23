@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
+use sqlx::FromRow;
 
 /// Struct representing book data as it exists in the DB.
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, sqlx::FromRow)]
 pub struct BookData {
     // Self-explanatory.
     pub title: String,
@@ -55,5 +56,38 @@ impl From<BookData> for Book {
             description,
             available,
         }
+    }
+}
+
+pub struct BookRepository {
+    conn_pool: sqlx::PgPool,
+}
+impl BookRepository {
+    pub fn new(connection_pool: sqlx::PgPool) -> Self {
+        Self {
+            conn_pool: connection_pool,
+        }
+    }
+
+    pub async fn get_books(&self) -> Result<Vec<Book>, String> {
+        let mut conn = match self.conn_pool.acquire().await {
+            Ok(c) => c,
+            Err(e) => return Err(e.to_string()),
+        };
+        let stream = match sqlx::query("SELECT * FROM k_data;")
+            .fetch_all(&mut conn)
+            .await
+        {
+            Ok(rows) => rows,
+            Err(e) => return Err(e.to_string()),
+        };
+        let books = stream
+            .into_iter()
+            .map(|row| {
+                BookData::from_row(&row).expect("Book data could not be gotten from Postgres row.")
+            })
+            .map(|data| Book::from(data))
+            .collect::<Vec<_>>();
+        Ok(books)
     }
 }
