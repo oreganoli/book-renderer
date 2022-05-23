@@ -110,7 +110,7 @@
 
 									<div class="col-3 m-auto price">
 										{% if book.available %}
-										<h5>€{{book.data.price}}</h5>
+										<h5>€{{book.data.price | trim_end_matches(pat="00") }}</h5>
 										<p style="color: #12D251">Dostępny</p>
 										{% else %}
 										<h5>-</h5>
