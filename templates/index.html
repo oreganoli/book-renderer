@@ -92,6 +92,7 @@
 					</form>
 
 					<div class="scrollarea">
+						{% for book in books %}
 						<div class="row ml-5">
 
 							<article class=" mt-4 mb-4 row">
@@ -101,75 +102,27 @@
 									</div>
 
 									<div class="col-8 m-auto">
-										<h5 style="font-weight: 600;">LOREM IPSUM DOLOR SIT AMET</h5>
+										<h5 style="font-weight: 600;">{{book.data.title}}</h5>
 
-										<p style="font-size:13; font-weight: 400;">In cursus nisi a hendrerit aliquam.
-											Duis ipsum enim, pretium at felis quis, elementum tristique augue. Aenean
-											porta dignissim egestas. Suspendisse ut lacinia nunc, quis porta nulla.</p>
+										<p style="font-size:13; font-weight: 400;">{{book.description}}</p>
 									</div>
 
 									<div class="col-3 m-auto price">
-										<h5>€84,34</h5>
+										{% if book.available %}
+										<h5>€{{book.data.price}}</h5>
 										<p style="color: #12D251">Dostępny</p>
-									</div>
-								</button>
-								<div class="divider mt-4"></div>
-
-							</article>
-
-						</div>
-
-						<div class="row ml-5">
-
-							<article class=" mt-4 mb-4 row">
-								<button type="button" class='row'>
-									<div class="col-1">
-										<img class="w-100" src="static/img/example.png"></img>
-									</div>
-
-									<div class="col-8 m-auto">
-										<h5 style="font-weight: 600;">LOREM IPSUM DOLOR SIT AMET</h5>
-
-										<p style="font-size:13; font-weight: 400;">In cursus nisi a hendrerit aliquam.
-											Duis ipsum enim, pretium at felis quis, elementum tristique augue. Aenean
-											porta dignissim egestas. Suspendisse ut lacinia nunc, quis porta nulla.</p>
-									</div>
-
-									<div class="col-3 m-auto price">
-										<h5>€84,34</h5>
+										{% else %}
+										<h5>-</h5>
 										<p style="color: #E13521">Niedostępny</p>
+										{% endif %}
 									</div>
 								</button>
 								<div class="divider mt-4"></div>
 
 							</article>
+
 						</div>
-
-						<div class="row ml-5">
-
-							<article class=" mt-4 mb-4 row">
-								<button type="button" class='row'>
-									<div class="col-1">
-										<img class="w-100" src="static/img/example.png"></img>
-									</div>
-
-									<div class="col-8 m-auto">
-										<h5 style="font-weight: 600;">LOREM IPSUM DOLOR SIT AMET</h5>
-
-										<p style="font-size:13; font-weight: 400;">In cursus nisi a hendrerit aliquam.
-											Duis ipsum enim, pretium at felis quis, elementum tristique augue. Aenean
-											porta dignissim egestas. Suspendisse ut lacinia nunc, quis porta nulla.</p>
-									</div>
-
-									<div class="col-3 m-auto price">
-										<h5>€84,34</h5>
-										<p style="color: #E13521">Niedostępny</p>
-									</div>
-								</button>
-								<div class="divider mt-4"></div>
-
-							</article>
-						</div>
+						{% endfor %}
 					</div>
 				</div>
 

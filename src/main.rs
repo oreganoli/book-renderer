@@ -8,7 +8,7 @@ use axum::{
 };
 use book_renderer::data::{Book, BookData};
 use include_dir::{include_dir, Dir};
-use tera::Tera;
+use tera::{Context, Tera};
 
 // Static file serving.
 static STATICS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/static/");
@@ -32,12 +32,10 @@ async fn serve_statics(Path(path): Path<String>) -> impl IntoResponse {
     }
 }
 
-async fn serve_index(Extension(renderer): Extension<Tera>) -> impl IntoResponse {
-    let html_string = renderer
-        .render("index.html", &tera::Context::new())
-        .unwrap_or(
-            "<h1>ERROR</h1><p>Error rendering HTML template. Consult main.rs.</p>".to_string(),
-        );
+async fn serve_index(Extension((renderer, ctx)): Extension<(Tera, Context)>) -> impl IntoResponse {
+    let html_string = renderer.render("index.html", &ctx).unwrap_or(
+        "<h1>ERROR</h1><p>Error rendering HTML template. Consult main.rs.</p>".to_string(),
+    );
     Html(html_string)
 }
 
@@ -104,6 +102,8 @@ async fn main() {
     .into_iter()
     .map(|book_data| Book::from(book_data))
     .collect::<Vec<_>>();
+    let mut context = Context::new();
+    context.insert("books", &books);
 
     // Create Tera template engine.
     let tera = match Tera::new("templates/**/*") {
@@ -117,7 +117,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(serve_index))
         .route("/static/*path", get(serve_statics))
-        .layer(Extension(tera));
+        .layer(Extension((tera, context)));
     axum::Server::bind(
         &"127.0.0.1:8080"
             .parse()
