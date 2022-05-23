@@ -140,15 +140,19 @@ async fn main() {
     };
     let repo = Arc::new(BookRepository::new(pool));
     // Create Axum web app.
+    let port_string = match std::env::var("PORT") {
+        Ok(port) => port,
+        Err(_) => panic!("Provide a PORT environment variable."),
+    };
     let app = Router::new()
         .route("/", get(serve_index))
         .route("/static/*path", get(serve_statics))
         .layer(Extension(tera))
         .layer(Extension(repo));
     axum::Server::bind(
-        &"127.0.0.1:8080"
+        &port_string
             .parse()
-            .expect("could not bind to port 8080"),
+            .expect("The PORT environment variable did not resolve to a valid port number."),
     )
     .serve(app.into_make_service())
     .await
