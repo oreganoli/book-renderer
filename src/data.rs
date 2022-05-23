@@ -1,24 +1,28 @@
+use serde::{Deserialize, Serialize};
+
 /// Struct representing book data as it exists in the DB.
+#[derive(Serialize, Deserialize, Debug)]
 pub struct BookData {
     // Self-explanatory.
-    title: String,
-    author: String,
-    price: f64,
-    publisher: String,
-    series: String,
-    year: i32,
-    pages: i32,
+    pub title: String,
+    pub author: String,
+    pub price: f64,
+    pub publisher: String,
+    pub series: String,
+    pub year: i32,
+    pub pages: i32,
     /// Cover type (hardcover, softcover, etc.)
-    cover: String,
+    pub cover: String,
     /// URL pointing at the store page to buy the book.
-    shop_url: String,
+    pub shop_url: String,
 }
 
 /// Struct for displaying the full book data.
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Book {
-    data: BookData,
-    description: String,
-    available: bool,
+    pub data: BookData,
+    pub description: String,
+    pub available: bool,
 }
 
 impl From<BookData> for Book {
