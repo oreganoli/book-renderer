@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use axum::{
     body::{self, Empty, Full},
     extract::Path,
@@ -6,7 +8,7 @@ use axum::{
     routing::get,
     Extension, Router,
 };
-use book_renderer::data::{Book, BookData};
+use book_renderer::data::{Book, BookData, BookRepository};
 use include_dir::{include_dir, Dir};
 use tera::{Context, Tera};
 
@@ -32,7 +34,21 @@ async fn serve_statics(Path(path): Path<String>) -> impl IntoResponse {
     }
 }
 
-async fn serve_index(Extension((renderer, ctx)): Extension<(Tera, Context)>) -> impl IntoResponse {
+async fn serve_index(
+    Extension(renderer): Extension<Tera>,
+    Extension(repo): Extension<Arc<BookRepository>>,
+) -> impl IntoResponse {
+    let books = match repo.get_books().await {
+        Ok(books) => books,
+        Err(e) => {
+            return Html(format!(
+                "<h1>ERROR</h1><p>Error retrieving book data: {}</p>",
+                e
+            ))
+        }
+    };
+    let mut ctx = tera::Context::new();
+    ctx.insert("books", &books);
     let html_string = renderer.render("index.html", &ctx).unwrap_or(
         "<h1>ERROR</h1><p>Error rendering HTML template. Consult main.rs.</p>".to_string(),
     );
@@ -113,11 +129,22 @@ async fn main() {
             ::std::process::exit(1);
         }
     };
+    // Create Postgres connection pool.
+    let database_url = match std::env::var("DATABASE_URL") {
+        Ok(url) => url,
+        Err(_) => panic!("Provide a DATABASE_URL environment variable."),
+    };
+    let pool = match sqlx::PgPool::connect(&database_url).await {
+        Ok(pool) => pool,
+        Err(e) => panic!("Database connection error: {}", e.to_string()),
+    };
+    let repo = Arc::new(BookRepository::new(pool));
     // Create Axum web app.
     let app = Router::new()
         .route("/", get(serve_index))
         .route("/static/*path", get(serve_statics))
-        .layer(Extension((tera, context)));
+        .layer(Extension(tera))
+        .layer(Extension(repo));
     axum::Server::bind(
         &"127.0.0.1:8080"
             .parse()
