@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{net::SocketAddr, sync::Arc};
 
 use axum::{
     body::{self, Empty, Full},
@@ -144,17 +144,20 @@ async fn main() {
         Ok(port) => port,
         Err(_) => panic!("Provide a PORT environment variable."),
     };
+    let socket_addr = port_string
+        .parse::<SocketAddr>()
+        .expect("The PORT environment variable did not resolve to a valid port number.");
+    eprintln!(
+        "Strona odpalona pod adresem http://{}/",
+        port_string.replace("0.0.0.0", "127.0.0.1")
+    );
     let app = Router::new()
         .route("/", get(serve_index))
         .route("/static/*path", get(serve_statics))
         .layer(Extension(tera))
         .layer(Extension(repo));
-    axum::Server::bind(
-        &port_string
-            .parse()
-            .expect("The PORT environment variable did not resolve to a valid port number."),
-    )
-    .serve(app.into_make_service())
-    .await
-    .unwrap();
+    axum::Server::bind(&socket_addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
 }
