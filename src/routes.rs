@@ -1,0 +1,66 @@
+use std::sync::Arc;
+
+use axum::{
+    body::{self, Empty, Full},
+    extract::{Path, Query},
+    http::{header, HeaderValue, Response, StatusCode},
+    response::{Html, IntoResponse, Redirect},
+    Extension,
+};
+use book_renderer::data::{BookRepository, SearchCriteria};
+use include_dir::{include_dir, Dir};
+use tera::Tera;
+
+// Static file serving.
+static STATICS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/static/");
+pub async fn serve_statics(Path(path): Path<String>) -> impl IntoResponse {
+    let path = path.trim_start_matches('/');
+    let mime_type = mime_guess::from_path(path).first_or_text_plain();
+
+    match STATICS_DIR.get_file(path) {
+        None => Response::builder()
+            .status(StatusCode::NOT_FOUND)
+            .body(body::boxed(Empty::new()))
+            .unwrap(),
+        Some(file) => Response::builder()
+            .status(StatusCode::OK)
+            .header(
+                header::CONTENT_TYPE,
+                HeaderValue::from_str(mime_type.as_ref()).unwrap(),
+            )
+            .body(body::boxed(Full::from(file.contents())))
+            .unwrap(),
+    }
+}
+/// Redirect the default request to / to /books and display the HTML view.
+pub async fn index_redirect() -> impl IntoResponse {
+    Redirect::to("/books")
+}
+/// Our main route. Displays a rendered HTML view of the book store.
+pub async fn books_view(
+    Extension(renderer): Extension<Tera>,
+    Extension(repo): Extension<Arc<BookRepository>>,
+    criteria: Option<Query<SearchCriteria>>,
+) -> impl IntoResponse {
+    let mut ctx = tera::Context::new();
+    dbg!(&criteria);
+    let criteria = criteria.map(|c| c.0).unwrap_or_default();
+    ctx.insert("criteria", &criteria);
+    dbg!(&criteria);
+
+    let books = match repo.get_books(criteria).await {
+        Ok(books) => books,
+        Err(e) => {
+            return Html(format!(
+                "<h1>ERROR</h1><p>Error retrieving book data: {}</p>",
+                e
+            ))
+        }
+    };
+    ctx.insert("books", &books);
+
+    let html_string = renderer.render("index.html", &ctx).unwrap_or(
+        "<h1>ERROR</h1><p>Error rendering HTML template. Consult main.rs.</p>".to_string(),
+    );
+    Html(html_string)
+}
