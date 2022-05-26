@@ -27,9 +27,10 @@ async fn main() {
     };
     let repo = Arc::new(BookRepository::new(pool));
     // Create Axum web app.
-    let port_string = match std::env::var("PORT") {
-        Ok(port) => port,
-        Err(_) => panic!("Provide a PORT environment variable."),
+    let port_string = if let Ok(port) = std::env::var("PORT") {
+        format!("0.0.0.0:{}", port)
+    } else {
+        panic!("Provide a PORT environment variable.")
     };
     let socket_addr = port_string
         .parse::<SocketAddr>()
