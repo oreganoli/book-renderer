@@ -21,22 +21,7 @@ const processBooks = () => {
     });
 };
 // Book currently viewed in the details pane:
-var curr_book = null; //{
-//     available: false,
-//     data: {
-//         title: "Mithril Test Book",
-//         author: "Me",
-//         publisher: "Self-published",
-//         year: 2022,
-//         pages: 444,
-//         price: "0.00",
-//         cover: "Hard",
-//         series: "Lorem Ipsums",
-//         shop_url: "http://goatse.com"
-//     },
-//     description: "-",
-//     link_img: "static/img/example.png",
-// }
+var curr_book = null;
 const CurrentBookAvailability = {
     view: () => {
         if (curr_book.available) {
