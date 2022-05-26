@@ -152,6 +152,7 @@ searchForm.addEventListener("submit", (e) => {
         method: "GET",
         url: "/api/books?" + url_params.toString()
     }).then((data) => {
+        window.history.pushState({}, "", document.location.origin + "/books?" + url_params.toString());
         books = data;
         processBooks();
         if (books.length > 0) {
