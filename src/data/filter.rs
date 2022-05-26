@@ -22,9 +22,9 @@ impl Default for SearchCriteria {
 #[derive(Debug, Deserialize)]
 pub enum SortBy {
     Alphabetically,
-    #[serde(alias = "price_asc")]
+    #[serde(rename = "price_asc")]
     PriceAscending,
-    #[serde(alias = "price_desc")]
+    #[serde(rename = "price_desc")]
     PriceDescending,
 }
 impl Default for SortBy {
