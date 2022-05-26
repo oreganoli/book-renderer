@@ -10,9 +10,11 @@ use axum::{
 use book_renderer::data::{BookRepository, SearchCriteria};
 use include_dir::{include_dir, Dir};
 use tera::Tera;
-
+use tokio::io::AsyncReadExt;
 // Static file serving.
+#[cfg(not(debug_assertions))]
 static STATICS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/static/");
+#[cfg(not(debug_assertions))]
 pub async fn serve_statics(Path(path): Path<String>) -> impl IntoResponse {
     let path = path.trim_start_matches('/');
     let mime_type = mime_guess::from_path(path).first_or_text_plain();
@@ -32,6 +34,31 @@ pub async fn serve_statics(Path(path): Path<String>) -> impl IntoResponse {
             .unwrap(),
     }
 }
+#[cfg(debug_assertions)]
+pub async fn serve_statics(Path(path): Path<String>) -> impl IntoResponse {
+    let path = "static".to_owned() + &path;
+    let mime_type = mime_guess::from_path(&path).first_or_text_plain();
+    let mut file_buf = vec![];
+    let file = match tokio::fs::File::open(&path).await {
+        Ok(mut f) => {
+            f.read_to_end(&mut file_buf).await.unwrap();
+            Response::builder()
+                .status(StatusCode::OK)
+                .header(
+                    header::CONTENT_TYPE,
+                    HeaderValue::from_str(mime_type.as_ref()).unwrap(),
+                )
+                .body(body::boxed(Full::from(file_buf)))
+                .unwrap()
+        }
+        Err(_) => Response::builder()
+            .status(StatusCode::NOT_FOUND)
+            .body(body::boxed(Empty::new()))
+            .unwrap(),
+    };
+    file
+}
+
 /// Redirect the default request to / to /books and display the HTML view.
 pub async fn index_redirect() -> impl IntoResponse {
     Redirect::to("/books")
