@@ -6,7 +6,7 @@ pub struct SearchCriteria {
     pub title_contains: Option<String>,
     pub min_price: Option<Decimal>,
     pub max_price: Option<Decimal>,
-    pub sort_by: SortBy,
+    pub sort_by: Option<SortBy>,
 }
 impl Default for SearchCriteria {
     fn default() -> Self {
@@ -14,7 +14,7 @@ impl Default for SearchCriteria {
             title_contains: None,
             min_price: None,
             max_price: None,
-            sort_by: Default::default(),
+            sort_by: Some(SortBy::default()),
         }
     }
 }

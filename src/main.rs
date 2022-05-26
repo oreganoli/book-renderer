@@ -40,6 +40,7 @@ async fn books(
     criteria: Option<Query<SearchCriteria>>,
 ) -> impl IntoResponse {
     let mut ctx = tera::Context::new();
+    dbg!(&criteria);
     let criteria = criteria.map(|c| c.0).unwrap_or_default();
     ctx.insert("criteria", &criteria);
     dbg!(&criteria);

@@ -33,7 +33,7 @@
 
 				<div class="col-7 ml-5">
 
-					<form>
+					<form action="/books" method="get">
 
 						<div style="margin-bottom: 20px; margin-top: 20px;" class="row ml-3">
 
@@ -43,9 +43,10 @@
 
 									<i class="fa fa-search" style="font-size:25px; margin: 12px;"></i>
 
-									<input id="productPlaceholder" type="text" class="form-control form-control-sm"
-										placeholder="Podaj nazwę produktu" aria-label="product" {% if
-										criteria.title_contains %} value="{{ criteria.title_contains }}" {% endif %}
+									<input id="productPlaceholder" name="title_contains" type="text"
+										class="form-control form-control-sm" placeholder="Podaj nazwę produktu"
+										aria-label="product" {% if criteria.title_contains %}
+										value="{{ criteria.title_contains }}" {% endif %}
 										aria-describedby="basic-addon2">
 
 								</div>
@@ -81,7 +82,7 @@
 								</div>
 
 								<div class="my-2">
-									<button id="filter" type="button" class="btn pt-2 pb-2 button">Filtruj</button>
+									<button id="filter" type="submit" class="btn pt-2 pb-2 button">Filtruj</button>
 								</div>
 							</div>
 
@@ -259,7 +260,6 @@
 		<!-- Copyright -->
 
 	</footer>
-
 	<script src="https://kit.fontawesome.com/e6c92d3f6a.js" crossorigin="anonymous"></script>
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js"
 		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>

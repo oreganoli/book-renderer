@@ -104,7 +104,7 @@ impl BookRepository {
             Ok(c) => c,
             Err(e) => return Err(e.to_string()),
         };
-        let sort_by = match criteria.sort_by {
+        let sort_by = match criteria.sort_by.unwrap_or_default() {
             SortBy::Alphabetically => "title",
             SortBy::PriceAscending => "price",
             SortBy::PriceDescending => "price DESC",
