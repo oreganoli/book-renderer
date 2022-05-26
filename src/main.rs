@@ -8,9 +8,9 @@ use axum::{
     routing::get,
     Extension, Router,
 };
-use book_renderer::data::{Book, BookData, BookRepository};
+use book_renderer::data::BookRepository;
 use include_dir::{include_dir, Dir};
-use tera::{Context, Tera};
+use tera::Tera;
 
 // Static file serving.
 static STATICS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/static/");
