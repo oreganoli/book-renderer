@@ -8,9 +8,9 @@ use axum::{
     Extension, Json,
 };
 use book_renderer::data::{BookRepository, SearchCriteria};
-
 use tera::Tera;
 use tokio::io::AsyncReadExt;
+
 // Static file serving.
 #[cfg(not(debug_assertions))]
 use include_dir::{include_dir, Dir};
@@ -65,9 +65,10 @@ pub async fn serve_statics(Path(path): Path<String>) -> impl IntoResponse {
 pub async fn index_redirect() -> impl IntoResponse {
     Redirect::to("/books")
 }
+/// Our main view's HTML template, baked into the compiled executable.
+static HTML_TEMPLATE: &'static str = include_str!("../templates/index.html");
 /// Our main route. Displays a rendered HTML view of the book store.
 pub async fn books_view(
-    Extension(renderer): Extension<Tera>,
     Extension(repo): Extension<Arc<BookRepository>>,
     criteria: Option<Query<SearchCriteria>>,
 ) -> impl IntoResponse {
@@ -87,10 +88,10 @@ pub async fn books_view(
         }
     };
     ctx.insert("books", &books);
-
-    let html_string = renderer.render("index.html", &ctx).unwrap_or(
-        "<h1>ERROR</h1><p>Error rendering HTML template. Consult main.rs.</p>".to_string(),
-    );
+    let html_string = match Tera::one_off(HTML_TEMPLATE, &ctx, true) {
+        Ok(html) => html,
+        Err(e) => format!("<h1>ERROR</h1><p>Error rendering HTML template: {}</p>", e),
+    };
     Html(html_string)
 }
 /// The API route we use to get data for our JS frontend.

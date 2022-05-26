@@ -8,14 +8,6 @@ use routes::*;
 
 #[tokio::main]
 async fn main() {
-    // Create Tera template engine.
-    let tera = match Tera::new("templates/**/*") {
-        Ok(t) => t,
-        Err(e) => {
-            println!("Parsing error(s): {}", e);
-            ::std::process::exit(1);
-        }
-    };
     // Create Postgres connection pool.
     let database_url = match std::env::var("DATABASE_URL") {
         Ok(url) => url,
@@ -44,7 +36,6 @@ async fn main() {
         .route("/books", get(books_view))
         .route("/api/books", get(books_json))
         .route("/static/*path", get(serve_statics))
-        .layer(Extension(tera))
         .layer(Extension(repo));
     axum::Server::bind(&socket_addr)
         .serve(app.into_make_service())
