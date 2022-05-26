@@ -69,7 +69,11 @@ const CurrentBookComponent = {
             ]),
             m(CurrentBookAvailability),
             m("div.mt-4.row", [
-                m("button.btn.pt-2.pb-2.button.mx-auto", { href: curr_book.data.shop_url, type: "button" }, "Przejdź do strony w sklepie")
+                m("button.btn.pt-2.pb-2.button.mx-auto", {
+                    href: curr_book.data.shop_url, type: "button", onclick: () => {
+                        window.location.href = curr_book.link;
+                    }
+                }, "Przejdź do strony w sklepie")
             ]),
         ];
     }
@@ -96,9 +100,8 @@ const BookRow = {
                 m("button.row.col.12", { type: "button", onclick: () => { } }, [
                     m("div.col-2", [m("img.w-100", { src: book.link_img })]),
                     m("div.col-7.mt-3", [
-                        m("a", {
+                        m("span", {
                             style: "color: #000",
-                            href: book.link
                         }, [m("h5", { style: "font-weight: 600;" }, book.data.title)]),
                         m("p", {
                             style: "font-size: 13; font-weight: 400;"
