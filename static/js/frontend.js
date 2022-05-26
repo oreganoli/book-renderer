@@ -2,22 +2,22 @@
 // All books:
 var books = [];
 // Book currently viewed in the details pane:
-var curr_book = {
-    available: false,
-    data: {
-        title: "Mithril Test Book",
-        author: "Me",
-        publisher: "Self-published",
-        year: 2022,
-        pages: 444,
-        price: "0.00",
-        cover: "Hard",
-        series: "Lorem Ipsums",
-        shop_url: "http://goatse.com"
-    },
-    description: "-",
-    link_img: "static/img/example.png",
-}
+var curr_book = null; //{
+//     available: false,
+//     data: {
+//         title: "Mithril Test Book",
+//         author: "Me",
+//         publisher: "Self-published",
+//         year: 2022,
+//         pages: 444,
+//         price: "0.00",
+//         cover: "Hard",
+//         series: "Lorem Ipsums",
+//         shop_url: "http://goatse.com"
+//     },
+//     description: "-",
+//     link_img: "static/img/example.png",
+// }
 const CurrentBookAvailability = {
     view: () => {
         if (curr_book.available) {
@@ -30,6 +30,9 @@ const CurrentBookAvailability = {
 // This component displays the current book's detailed view.
 const CurrentBookComponent = {
     view: () => {
+        if (curr_book == null) {
+            return m("h5", "Nie wybrano żadnej książki");
+        }
         return [
             m("h5", curr_book.data.title),
             m("div.divider.my-3"),
@@ -129,7 +132,11 @@ m.request({
     url: "/api" + window.location.pathname,
 }).then((data) => {
     books = data;
-    curr_book = books[0];
+    if (books.length > 0) {
+        curr_book = books[0];
+    } else {
+        curr_book = null;
+    }
     m.redraw();
     //console.log(data);
 });
