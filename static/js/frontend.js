@@ -1,8 +1,8 @@
 // Set up the data model.
 // All books:
-const books = [];
+var books = [];
 // Book currently viewed in the details pane:
-const curr_book = {
+var curr_book = {
     available: false,
     data: {
         title: "Mithril Test Book",
@@ -103,23 +103,33 @@ const BookRow = {
                             [m("b", "Autor: " + book.data.author)])
                     ]),
                     m("div.col-3.mt-3", [
-                        m(BookPriceAvailability, { price: book.price, available: book.available })
-                    ])
+                        m(BookPriceAvailability, { price: book.data.price, available: book.available })
+                    ]),
+                    m("div.divider.mt-4")
                 ])
             ])
         ]);
     }
 };
+const BookTable = {
+    view: () => {
+        return books.map((book) => m(BookRow, { book: book }));
+    }
+}
 
 // Get our mount points.
 const infoArea = document.querySelector("div.infoarea");
+const scrollArea = document.querySelector("div.scrollarea");
+// Start rendering.
+m.mount(infoArea, CurrentBookComponent);
+m.mount(scrollArea, BookTable);
 // Populate books:
 m.request({
     method: "GET",
     url: "/api" + window.location.pathname,
 }).then((data) => {
     books = data;
+    curr_book = books[0];
+    m.redraw();
     //console.log(data);
 });
-// Start rendering.
-m.mount(infoArea, CurrentBookComponent)
