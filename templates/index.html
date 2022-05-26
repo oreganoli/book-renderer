@@ -33,7 +33,7 @@
 
 				<div class="col-7 ml-5">
 
-					<form action="/books" method="get">
+					<form id="searchForm" action="/books" method="get">
 
 						<div style="margin-bottom: 20px; margin-top: 20px;" class="row ml-3">
 
@@ -111,7 +111,7 @@
 
 									<div class="col-3 mt-3">
 										{% if book.available %}
-										<h5>{{ book.data.price }} zł</h5>
+										<h5>{{ book.data.price | replace(from=".", to=",") }} zł</h5>
 										<p style="color: #12D251">Dostępny</p>
 										{% else %}
 										<h5>-</h5>
@@ -260,6 +260,8 @@
 		<!-- Copyright -->
 
 	</footer>
+	<script src="https://unpkg.com/mithril/mithril.js"></script>
+	<script src="static/js/frontend.js"></script>
 	<script src="https://kit.fontawesome.com/e6c92d3f6a.js" crossorigin="anonymous"></script>
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js"
 		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
