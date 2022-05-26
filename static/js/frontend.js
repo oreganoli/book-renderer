@@ -1,4 +1,6 @@
 // Set up the data model.
+// All books:
+const books = [];
 // Book currently viewed in the details pane:
 const curr_book = {
     available: false,
@@ -111,5 +113,13 @@ const BookRow = {
 
 // Get our mount points.
 const infoArea = document.querySelector("div.infoarea");
+// Populate books:
+m.request({
+    method: "GET",
+    url: "/api" + window.location.pathname,
+}).then((data) => {
+    books = data;
+    //console.log(data);
+});
 // Start rendering.
 m.mount(infoArea, CurrentBookComponent)
