@@ -8,7 +8,7 @@ use axum::{
     routing::get,
     Extension, Router,
 };
-use book_renderer::data::BookRepository;
+use book_renderer::data::{BookRepository, SearchCriteria, SortBy};
 use include_dir::{include_dir, Dir};
 use tera::Tera;
 
@@ -37,8 +37,13 @@ async fn serve_statics(Path(path): Path<String>) -> impl IntoResponse {
 async fn books(
     Extension(renderer): Extension<Tera>,
     Extension(repo): Extension<Arc<BookRepository>>,
+    criteria: Option<SearchCriteria>,
+    sort: Option<SortBy>,
 ) -> impl IntoResponse {
-    let books = match repo.get_books().await {
+    let books = match repo
+        .get_books(criteria.unwrap_or_default(), sort.unwrap_or_default())
+        .await
+    {
         Ok(books) => books,
         Err(e) => {
             return Html(format!(

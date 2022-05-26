@@ -1,11 +1,8 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
-use sqlx::{FromRow, Postgres};
-
-use self::filter::{SearchCriteria, SortBy};
-
+use sqlx::Postgres;
 mod filter;
-
+pub use filter::{SearchCriteria, SortBy};
 /// Struct representing book data as it exists in the DB.
 #[derive(Serialize, Deserialize, Debug, sqlx::FromRow)]
 pub struct BookData {
