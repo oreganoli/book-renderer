@@ -99,16 +99,12 @@ impl BookRepository {
             conn_pool: connection_pool,
         }
     }
-    pub async fn get_books(
-        &self,
-        criteria: SearchCriteria,
-        sort: SortBy,
-    ) -> Result<Vec<Book>, String> {
+    pub async fn get_books(&self, criteria: SearchCriteria) -> Result<Vec<Book>, String> {
         let mut conn = match self.conn_pool.acquire().await {
             Ok(c) => c,
             Err(e) => return Err(e.to_string()),
         };
-        let sort_by = match sort {
+        let sort_by = match criteria.sort_by {
             SortBy::Alphabetically => "title",
             SortBy::PriceAscending => "price",
             SortBy::PriceDescending => "price DESC",

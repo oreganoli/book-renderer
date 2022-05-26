@@ -38,13 +38,10 @@ async fn books(
     Extension(renderer): Extension<Tera>,
     Extension(repo): Extension<Arc<BookRepository>>,
     criteria: Option<Query<SearchCriteria>>,
-    sort: Option<Query<SortBy>>,
 ) -> impl IntoResponse {
     let criteria = criteria.map(|c| c.0).unwrap_or_default();
-    let sort = sort.map(|s| s.0).unwrap_or_default();
     dbg!(&criteria);
-    dbg!(&sort);
-    let books = match repo.get_books(criteria, sort).await {
+    let books = match repo.get_books(criteria).await {
         Ok(books) => books,
         Err(e) => {
             return Html(format!(

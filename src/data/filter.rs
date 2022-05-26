@@ -6,6 +6,7 @@ pub struct SearchCriteria {
     pub title_contains: Option<String>,
     pub min_price: Option<Decimal>,
     pub max_price: Option<Decimal>,
+    pub sort_by: SortBy,
 }
 impl Default for SearchCriteria {
     fn default() -> Self {
@@ -13,6 +14,7 @@ impl Default for SearchCriteria {
             title_contains: None,
             min_price: None,
             max_price: None,
+            sort_by: Default::default(),
         }
     }
 }
@@ -20,7 +22,9 @@ impl Default for SearchCriteria {
 #[derive(Debug, Deserialize)]
 pub enum SortBy {
     Alphabetically,
+    #[serde(alias = "price_asc")]
     PriceAscending,
+    #[serde(alias = "price_desc")]
     PriceDescending,
 }
 impl Default for SortBy {
