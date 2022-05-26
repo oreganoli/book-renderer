@@ -8,10 +8,12 @@ use axum::{
     Extension, Json,
 };
 use book_renderer::data::{BookRepository, SearchCriteria};
-use include_dir::{include_dir, Dir};
+
 use tera::Tera;
 use tokio::io::AsyncReadExt;
 // Static file serving.
+#[cfg(not(debug_assertions))]
+use include_dir::{include_dir, Dir};
 #[cfg(not(debug_assertions))]
 static STATICS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/static/");
 #[cfg(not(debug_assertions))]
