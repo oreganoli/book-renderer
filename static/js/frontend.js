@@ -1,6 +1,25 @@
 // Set up the data model.
 // All books:
 var books = [];
+const processBooks = () => {
+    books.forEach((book) => {
+        if (book.data.year == -1) {
+            book.data.year = "-"
+        }
+        if (book.data.pages == -1) {
+            book.data.pages = "-"
+        }
+        if (book.data.price == "-1.00") {
+            book.data.price = "-"
+        }
+        if (book.data.cover == "") {
+            book.data.cover = "-"
+        }
+        if (book.data.series == "") {
+            book.data.series = "-"
+        }
+    });
+};
 // Book currently viewed in the details pane:
 var curr_book = null; //{
 //     available: false,
@@ -149,6 +168,7 @@ searchForm.addEventListener("submit", (e) => {
         url: "/api/books?" + url_params.toString()
     }).then((data) => {
         books = data;
+        processBooks();
         if (books.length > 0) {
             curr_book = books[0];
         } else {
@@ -169,6 +189,7 @@ m.request({
     url: "/api" + window.location.pathname + window.location.search,
 }).then((data) => {
     books = data;
+    processBooks();
     if (books.length > 0) {
         curr_book = books[0];
     } else {
