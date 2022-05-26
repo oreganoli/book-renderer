@@ -64,12 +64,15 @@
 
 								<div class="mx-3 my-2">
 
-									<label for="sort">Sortuj według:</label>
+									<label for="sort_by">Sortuj według:</label>
 
-									<select name="sort" id="sort">
-										<option value="alfabet">Alfabetycznie A-Z</option>
-										<option value="cenaros">Cena rosnąco</option>
-										<option value="cenamal">Cena malejąco</option>
+									<select name="sort_by" id="sort_by">
+										<option value="a_to_z" {% if criteria.sort_by=="a_to_z" %}selected{% endif %}>
+											Alfabetycznie A-Z</option>
+										<option value="price_asc" {% if criteria.sort_by=="price_asc" %}selected{% endif
+											%}>Cena rosnąco</option>
+										<option value="price_desc" {% if criteria.sort_by=="price_desc" %}selected{%
+											endif %}>Cena malejąco</option>
 									</select>
 								</div>
 
