@@ -127,30 +127,34 @@ const BookTable = {
         return books.map((book) => m(BookRow, { book: book }));
     }
 }
-// Sanitize the search form so it doesn't submit empty query parameters.
+// Make the search form use our API.
 let searchForm = document.getElementById("searchForm");
-var sanitized = false;
 searchForm.addEventListener("submit", (e) => {
-    if (!sanitized) {
-        e.preventDefault();
-    } else {
-        return;
+    e.preventDefault();
+    let url_params = new URLSearchParams();
+    if (searchForm.elements.title_contains.value != "") {
+        url_params.append("title_contains", searchForm.elements.title_contains.value)
     }
-    // Inputs with empty "name" attributes don't get sent.
-    if (searchForm.elements.title_contains.value == "") {
-        searchForm.elements.title_contains.name = ""
+    if (searchForm.elements.min_price.value != "") {
+        url_params.append("min_price", searchForm.elements.min_price.value)
     }
-    if (searchForm.elements.min_price.value == "") {
-        searchForm.elements.min_price.name = ""
+    if (searchForm.elements.max_price.value != "") {
+        url_params.append("max_price", searchForm.elements.max_price.value)
     }
-    if (searchForm.elements.max_price.value == "") {
-        searchForm.elements.max_price.name = ""
+    if (searchForm.elements.sort_by.value != "") {
+        url_params.append("sort_by", searchForm.elements.sort_by.value)
     }
-    if (searchForm.elements.sort_by.value == "") {
-        searchForm.elements.sort_by.name = ""
-    }
-    sanitized = true;
-    searchForm.submit();
+    m.request({
+        method: "GET",
+        url: "/api/books?" + url_params.toString()
+    }).then((data) => {
+        books = data;
+        if (books.length > 0) {
+            curr_book = books[0];
+        } else {
+            curr_book = null;
+        }
+    })
 })
 
 // Get our mount points.
