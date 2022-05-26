@@ -21,6 +21,7 @@ impl Default for SearchCriteria {
 /// Enum representing sorting criteria.
 #[derive(Debug, Deserialize, Serialize)]
 pub enum SortBy {
+    #[serde(rename = "a_to_z")]
     Alphabetically,
     #[serde(rename = "price_asc")]
     PriceAscending,
