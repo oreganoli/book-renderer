@@ -127,6 +127,31 @@ const BookTable = {
         return books.map((book) => m(BookRow, { book: book }));
     }
 }
+// Sanitize the search form so it doesn't submit empty query parameters.
+let searchForm = document.getElementById("searchForm");
+var sanitized = false;
+searchForm.addEventListener("submit", (e) => {
+    if (!sanitized) {
+        e.preventDefault();
+    } else {
+        return;
+    }
+    // Inputs with empty "name" attributes don't get sent.
+    if (searchForm.elements.title_contains.value == "") {
+        searchForm.elements.title_contains.name = ""
+    }
+    if (searchForm.elements.min_price.value == "") {
+        searchForm.elements.min_price.name = ""
+    }
+    if (searchForm.elements.max_price.value == "") {
+        searchForm.elements.max_price.name = ""
+    }
+    if (searchForm.elements.sort_by.value == "") {
+        searchForm.elements.sort_by.name = ""
+    }
+    sanitized = true;
+    searchForm.submit();
+})
 
 // Get our mount points.
 const infoArea = document.querySelector("div.infoarea");
@@ -137,7 +162,7 @@ m.mount(scrollArea, BookTable);
 // Populate books:
 m.request({
     method: "GET",
-    url: "/api" + window.location.pathname,
+    url: "/api" + window.location.pathname + window.location.search,
 }).then((data) => {
     books = data;
     if (books.length > 0) {
