@@ -8,7 +8,7 @@ use axum::{
     routing::get,
     Extension, Router,
 };
-use book_renderer::data::{BookRepository, SearchCriteria, SortBy};
+use book_renderer::data::{BookRepository, SearchCriteria};
 use include_dir::{include_dir, Dir};
 use tera::Tera;
 
@@ -39,8 +39,11 @@ async fn books(
     Extension(repo): Extension<Arc<BookRepository>>,
     criteria: Option<Query<SearchCriteria>>,
 ) -> impl IntoResponse {
+    let mut ctx = tera::Context::new();
     let criteria = criteria.map(|c| c.0).unwrap_or_default();
+    ctx.insert("criteria", &criteria);
     dbg!(&criteria);
+
     let books = match repo.get_books(criteria).await {
         Ok(books) => books,
         Err(e) => {
@@ -50,8 +53,8 @@ async fn books(
             ))
         }
     };
-    let mut ctx = tera::Context::new();
     ctx.insert("books", &books);
+
     let html_string = renderer.render("index.html", &ctx).unwrap_or(
         "<h1>ERROR</h1><p>Error rendering HTML template. Consult main.rs.</p>".to_string(),
     );
