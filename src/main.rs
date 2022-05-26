@@ -4,7 +4,7 @@ use axum::{
     body::{self, Empty, Full},
     extract::Path,
     http::{header, HeaderValue, Response, StatusCode},
-    response::{Html, IntoResponse},
+    response::{Html, IntoResponse, Redirect},
     routing::get,
     Extension, Router,
 };
@@ -34,7 +34,7 @@ async fn serve_statics(Path(path): Path<String>) -> impl IntoResponse {
     }
 }
 
-async fn serve_index(
+async fn books(
     Extension(renderer): Extension<Tera>,
     Extension(repo): Extension<Arc<BookRepository>>,
 ) -> impl IntoResponse {
@@ -53,6 +53,10 @@ async fn serve_index(
         "<h1>ERROR</h1><p>Error rendering HTML template. Consult main.rs.</p>".to_string(),
     );
     Html(html_string)
+}
+
+async fn index_redirect() -> impl IntoResponse {
+    Redirect::to("/books")
 }
 
 #[tokio::main]
@@ -88,7 +92,8 @@ async fn main() {
         port_string.replace("0.0.0.0", "127.0.0.1")
     );
     let app = Router::new()
-        .route("/", get(serve_index))
+        .route("/", get(index_redirect))
+        .route("/books", get(books))
         .route("/static/*path", get(serve_statics))
         .layer(Extension(tera))
         .layer(Extension(repo));
