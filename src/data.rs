@@ -1,6 +1,10 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
-use sqlx::FromRow;
+use sqlx::{FromRow, Postgres};
+
+use self::filter::{SearchCriteria, SortBy};
+
+mod filter;
 
 /// Struct representing book data as it exists in the DB.
 #[derive(Serialize, Deserialize, Debug, sqlx::FromRow)]
@@ -98,26 +102,43 @@ impl BookRepository {
             conn_pool: connection_pool,
         }
     }
-
-    pub async fn get_books(&self) -> Result<Vec<Book>, String> {
+    pub async fn get_books(
+        &self,
+        criteria: SearchCriteria,
+        sort: SortBy,
+    ) -> Result<Vec<Book>, String> {
         let mut conn = match self.conn_pool.acquire().await {
             Ok(c) => c,
             Err(e) => return Err(e.to_string()),
         };
-        let stream = match sqlx::query("SELECT * FROM k_data;")
+        let sort_by = match sort {
+            SortBy::Alphabetically => "title",
+            SortBy::PriceAscending => "price",
+            SortBy::PriceDescending => "price DESC",
+        };
+        let sql_string =
+            "SELECT * FROM k_data WHERE price BETWEEN $1 AND $2 AND LOWER(title) ~ $3; SORT BY "
+                .to_owned()
+                + sort_by
+                + ";";
+        let books = match sqlx::query_as::<Postgres, BookData>(&sql_string)
+            .bind(criteria.min_price.unwrap_or(Decimal::ZERO))
+            .bind(criteria.min_price.unwrap_or(Decimal::MAX))
+            .bind(
+                criteria
+                    .title_contains
+                    .unwrap_or(String::new())
+                    .to_lowercase(),
+            )
             .fetch_all(&mut conn)
             .await
         {
             Ok(rows) => rows,
             Err(e) => return Err(e.to_string()),
-        };
-        let books = stream
-            .into_iter()
-            .map(|row| {
-                BookData::from_row(&row).expect("Book data could not be gotten from Postgres row.")
-            })
-            .map(|data| Book::from(data))
-            .collect::<Vec<_>>();
+        }
+        .into_iter()
+        .map(|data| Book::from(data))
+        .collect::<Vec<_>>();
         Ok(books)
     }
 }
