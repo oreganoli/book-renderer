@@ -1,5 +1,7 @@
 use rust_decimal::Decimal;
+use serde::Deserialize;
 
+#[derive(Debug, Deserialize)]
 pub struct SearchCriteria {
     pub title_contains: Option<String>,
     pub min_price: Option<Decimal>,
@@ -14,8 +16,8 @@ impl Default for SearchCriteria {
         }
     }
 }
-
 /// Enum representing sorting criteria.
+#[derive(Debug, Deserialize)]
 pub enum SortBy {
     Alphabetically,
     PriceAscending,

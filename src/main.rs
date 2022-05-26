@@ -2,7 +2,7 @@ use std::{net::SocketAddr, sync::Arc};
 
 use axum::{
     body::{self, Empty, Full},
-    extract::Path,
+    extract::{Path, Query},
     http::{header, HeaderValue, Response, StatusCode},
     response::{Html, IntoResponse, Redirect},
     routing::get,
@@ -37,13 +37,14 @@ async fn serve_statics(Path(path): Path<String>) -> impl IntoResponse {
 async fn books(
     Extension(renderer): Extension<Tera>,
     Extension(repo): Extension<Arc<BookRepository>>,
-    criteria: Option<SearchCriteria>,
-    sort: Option<SortBy>,
+    criteria: Option<Query<SearchCriteria>>,
+    sort: Option<Query<SortBy>>,
 ) -> impl IntoResponse {
-    let books = match repo
-        .get_books(criteria.unwrap_or_default(), sort.unwrap_or_default())
-        .await
-    {
+    let criteria = criteria.map(|c| c.0).unwrap_or_default();
+    let sort = sort.map(|s| s.0).unwrap_or_default();
+    dbg!(&criteria);
+    dbg!(&sort);
+    let books = match repo.get_books(criteria, sort).await {
         Ok(books) => books,
         Err(e) => {
             return Html(format!(

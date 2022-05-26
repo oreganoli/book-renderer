@@ -114,13 +114,13 @@ impl BookRepository {
             SortBy::PriceDescending => "price DESC",
         };
         let sql_string =
-            "SELECT * FROM k_data WHERE price BETWEEN $1 AND $2 AND LOWER(title) ~ $3; SORT BY "
+            "SELECT * FROM k_data WHERE price BETWEEN $1 AND $2 AND LOWER(title) ~ $3 ORDER BY "
                 .to_owned()
                 + sort_by
                 + ";";
         let books = match sqlx::query_as::<Postgres, BookData>(&sql_string)
             .bind(criteria.min_price.unwrap_or(Decimal::ZERO))
-            .bind(criteria.min_price.unwrap_or(Decimal::MAX))
+            .bind(criteria.max_price.unwrap_or(Decimal::MAX))
             .bind(
                 criteria
                     .title_contains
