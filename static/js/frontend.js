@@ -1,20 +1,24 @@
 // Set up the data model.
-const current_book_details = {
-    title: "Mithril Test Book",
-    author: "Me",
-    publisher: "Self-published",
-    year: 2022,
-    pages: 444,
-    price: "0.00",
-    cover: "Hard",
-    series: "Lorem Ipsums",
-    coverImg: "static/img/example.png",
+// Book currently viewed in the details pane:
+const curr_book = {
     available: false,
-    link: "http://goatse.com"
+    data: {
+        title: "Mithril Test Book",
+        author: "Me",
+        publisher: "Self-published",
+        year: 2022,
+        pages: 444,
+        price: "0.00",
+        cover: "Hard",
+        series: "Lorem Ipsums",
+        shop_url: "http://goatse.com"
+    },
+    description: "-",
+    link_img: "static/img/example.png",
 }
 const CurrentBookAvailability = {
     view: () => {
-        if (current_book_details.available) {
+        if (curr_book.available) {
             return m("p.availability", { style: "color: #12D251" }, "Dostępny");
         } else {
             return m("p.availability", { style: "color: #E13521" }, "Niedostępny");
@@ -25,11 +29,11 @@ const CurrentBookAvailability = {
 const CurrentBookComponent = {
     view: () => {
         return [
-            m("h5", current_book_details.title.toLocaleUpperCase()),
+            m("h5", curr_book.data.title),
             m("div.divider.my-3"),
             m("div.row", [
                 m("div.col-3.m-auto", [
-                    m("img.w-100", { src: current_book_details.coverImg })
+                    m("img.w-100", { src: curr_book.link_img })
                 ]),
                 m("div.col-5.row.m-auto", [
                     m("div.col-3.mr-5", [
@@ -37,8 +41,8 @@ const CurrentBookComponent = {
                         m("div.row", [m("p", "Wydawnictwo:")])
                     ]),
                     m("div.col-2.ml-5", [
-                        m("div.row", [m("h6.value", current_book_details.price + "zł")]),
-                        m("div.row", [m("h6.value", current_book_details.publisher)])
+                        m("div.row", [m("h6.value", curr_book.data.price + "zł")]),
+                        m("div.row", [m("h6.value", curr_book.data.publisher)])
                     ])
                 ])]),
             m("div.divider.my-3"),
@@ -51,15 +55,16 @@ const CurrentBookComponent = {
                     m("div.row", [m("p", "Seria:")]),
                 ]),
                 m("div.col-3.m-auto.p-auto", [
-                    m("div.row", [m("h6.value", current_book_details.author)]),
-                    m("div.row", [m("h6.value", current_book_details.year)]),
-                    m("div.row", [m("h6.value", current_book_details.pages)]),
-                    m("div.row", [m("h6.value", current_book_details.cover)]),
-                    m("div.row", [m("h6.value", current_book_details.series)]),
+                    m("div.row", [m("h6.value", curr_book.data.author)]),
+                    m("div.row", [m("h6.value", curr_book.data.year)]),
+                    m("div.row", [m("h6.value", curr_book.data.pages)]),
+                    m("div.row", [m("h6.value", curr_book.data.cover)]),
+                    m("div.row", [m("h6.value", curr_book.data.series)]),
                 ])
             ]),
+            m(CurrentBookAvailability),
             m("div.mt-4.row", [
-                m("button.btn.pt-2.pb-2.button.mx-auto", { href: current_book_details.link, type: "button" }, "Przejdź do strony w sklepie")
+                m("button.btn.pt-2.pb-2.button.mx-auto", { href: curr_book.data.shop_url, type: "button" }, "Przejdź do strony w sklepie")
             ]),
         ];
     }
