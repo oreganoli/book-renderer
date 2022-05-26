@@ -5,10 +5,24 @@ pub struct SearchCriteria {
     pub min_price: Option<Decimal>,
     pub max_price: Option<Decimal>,
 }
+impl Default for SearchCriteria {
+    fn default() -> Self {
+        Self {
+            title_contains: None,
+            min_price: None,
+            max_price: None,
+        }
+    }
+}
 
 /// Enum representing sorting criteria.
 pub enum SortBy {
     Alphabetically,
     PriceAscending,
     PriceDescending,
+}
+impl Default for SortBy {
+    fn default() -> Self {
+        Self::Alphabetically
+    }
 }
