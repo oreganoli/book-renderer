@@ -5,7 +5,7 @@ use axum::{
     extract::{Path, Query},
     http::{header, HeaderValue, Response, StatusCode},
     response::{Html, IntoResponse, Redirect},
-    Extension,
+    Extension, Json,
 };
 use book_renderer::data::{BookRepository, SearchCriteria};
 use include_dir::{include_dir, Dir};
@@ -63,4 +63,19 @@ pub async fn books_view(
         "<h1>ERROR</h1><p>Error rendering HTML template. Consult main.rs.</p>".to_string(),
     );
     Html(html_string)
+}
+/// The API route we use to get data for our JS frontend.
+pub async fn books_json(
+    Extension(repo): Extension<Arc<BookRepository>>,
+    criteria: Option<Query<SearchCriteria>>,
+) -> Result<impl IntoResponse, impl IntoResponse> {
+    let criteria = criteria.map(|c| c.0).unwrap_or_default();
+    dbg!(&criteria);
+    match repo.get_books(criteria).await {
+        Ok(books) => Ok(Json(books)),
+        Err(e) => Err((
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(format!("Error retrieving book data: {}", e)),
+        )),
+    }
 }

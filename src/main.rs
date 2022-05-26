@@ -41,6 +41,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(index_redirect))
         .route("/books", get(books_view))
+        .route("/api/books", get(books_json))
         .route("/static/*path", get(serve_statics))
         .layer(Extension(tera))
         .layer(Extension(repo));
