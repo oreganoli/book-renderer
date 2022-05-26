@@ -111,7 +111,7 @@
 
 									<div class="col-3 mt-3">
 										{% if book.available %}
-										<h5>{{ book.data.price }} zł</h5>
+										<h5>{{ book.data.price | replace(from=".", to=",") }} zł</h5>
 										<p style="color: #12D251">Dostępny</p>
 										{% else %}
 										<h5>-</h5>
