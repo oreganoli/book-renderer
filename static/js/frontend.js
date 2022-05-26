@@ -69,6 +69,46 @@ const CurrentBookComponent = {
         ];
     }
 }
+const BookPriceAvailability = {
+    view: (vnode) => {
+        let price = vnode.attrs.price;
+        let available = vnode.attrs.available;
+        if (available) {
+            return [
+                m("h5", price.replace(".", ",") + " zł"),
+                m("p.availability", { style: "color: #12D251" }, "Dostępny")
+            ];
+        } else {
+            return m("p.availability", { style: "color: #E13521" }, "Niedostępny");
+        }
+    }
+};
+const BookRow = {
+    view: (vnode) => {
+        let book = vnode.attrs.book;
+        return m("div.ml-5", [
+            m("article.mt-4.mb-4.row", [
+                m("button.row.col.12", { type: "button", onclick: () => { } }, [
+                    m("div.col-2", [m("img.w-100", { src: book.link_img })]),
+                    m("div.col-7.mt-3", [
+                        m("a", {
+                            style: "color: #000",
+                            href: book.link
+                        }, [m("h5", { style: "font-weight: 600;" }, book.data.title)]),
+                        m("p", {
+                            style: "font-size: 13; font-weight: 400;"
+                        },
+                            [m("b", "Autor: " + book.data.author)])
+                    ]),
+                    m("div.col-3.mt-3", [
+                        m(BookPriceAvailability, { price: book.price, available: book.available })
+                    ])
+                ])
+            ])
+        ]);
+    }
+};
+
 // Get our mount points.
 const infoArea = document.querySelector("div.infoarea");
 // Start rendering.
