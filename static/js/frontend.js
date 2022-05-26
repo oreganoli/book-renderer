@@ -41,7 +41,7 @@ const CurrentBookComponent = {
                         m("div.row", [m("p", "Wydawnictwo:")])
                     ]),
                     m("div.col-2.ml-5", [
-                        m("div.row", [m("h6.value", curr_book.data.price + "zł")]),
+                        m("div.row", [m("h6.value", curr_book.data.price.replace(".", ",") + "zł")]),
                         m("div.row", [m("h6.value", curr_book.data.publisher)])
                     ])
                 ])]),
