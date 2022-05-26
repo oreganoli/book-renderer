@@ -17,6 +17,7 @@ pub struct BookData {
     pub cover: String,
     /// URL pointing at the store page to buy the book.
     pub shop_url: String,
+    pub img_url: String,
 }
 
 /// Struct for displaying the full book data.
@@ -26,6 +27,7 @@ pub struct Book {
     pub description: String,
     pub available: bool,
     pub link: Option<String>,
+    pub link_img: Option<String>,
 }
 // Helper function for possibly missing fields.
 fn hyphenize_empty(string: &str) -> String {
@@ -71,11 +73,17 @@ impl From<BookData> for Book {
         } else {
             Some(data.shop_url.to_owned())
         };
+        let link_img = if data.img_url.is_empty() {
+            None
+        } else {
+            Some(data.img_url.to_owned())
+        };
         Self {
             data,
             description,
             available,
             link,
+            link_img,
         }
     }
 }
