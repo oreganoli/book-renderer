@@ -2,7 +2,6 @@ use std::{net::SocketAddr, sync::Arc};
 
 use axum::{routing::get, Extension, Router};
 use book_renderer::data::BookRepository;
-use tera::Tera;
 mod routes;
 use routes::*;
 

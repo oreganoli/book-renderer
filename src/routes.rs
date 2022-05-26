@@ -9,8 +9,6 @@ use axum::{
 };
 use book_renderer::data::{BookRepository, SearchCriteria};
 use tera::Tera;
-use tokio::io::AsyncReadExt;
-
 // Static file serving.
 #[cfg(not(debug_assertions))]
 use include_dir::{include_dir, Dir};
@@ -36,6 +34,9 @@ pub async fn serve_statics(Path(path): Path<String>) -> impl IntoResponse {
             .unwrap(),
     }
 }
+// Static file serving for development use - loads files on demand instead of having them baked in at build time.
+#[cfg(debug_assertions)]
+use tokio::io::AsyncReadExt;
 #[cfg(debug_assertions)]
 pub async fn serve_statics(Path(path): Path<String>) -> impl IntoResponse {
     let path = "static".to_owned() + &path;
