@@ -95,7 +95,12 @@ const BookPriceAvailability = {
 const BookRow = {
     view: (vnode) => {
         let book = vnode.attrs.book;
-        return m("div.ml-5", [
+        return m("div.ml-5", {
+            onclick: () => {
+                curr_book = book;
+                m.redraw();
+            }
+        }, [
             m("article.mt-4.mb-4.row", [
                 m("button.row.col.12", { type: "button", onclick: () => { } }, [
                     m("div.col-2", [m("img.w-100", { src: book.link_img })]),
