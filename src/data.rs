@@ -40,6 +40,7 @@ fn hyphenize_empty(string: &str) -> String {
 impl From<BookData> for Book {
     fn from(data: BookData) -> Self {
         let mut data = data;
+        data.price = data.price.round_dp(2); // remove trailing zeroes from prices
         let available = data.price != Decimal::NEGATIVE_ONE;
         let description = {
             let price_text = if data.price == Decimal::NEGATIVE_ONE {
