@@ -33,7 +33,7 @@
 
 				<div class="col-7 ml-5">
 
-					<form>
+					<form id="searchForm" action="/books" method="get">
 
 						<div style="margin-bottom: 20px; margin-top: 20px;" class="row ml-3">
 
@@ -43,8 +43,10 @@
 
 									<i class="fa fa-search" style="font-size:25px; margin: 12px;"></i>
 
-									<input id="productPlaceholder" type="text" class="form-control form-control-sm"
-										placeholder="Podaj nazwę produktu" aria-label="product"
+									<input id="productPlaceholder" name="title_contains" type="text"
+										class="form-control form-control-sm" placeholder="Podaj nazwę produktu"
+										aria-label="product" {% if criteria.title_contains %}
+										value="{{ criteria.title_contains }}" {% endif %}
 										aria-describedby="basic-addon2">
 
 								</div>
@@ -52,38 +54,35 @@
 
 							<div class="row">
 								<div class="my-2" style="display: flex;">
-									<label for="rate" style="margin-top: 11px; width: 50%; margin-left: 5px;">Cena
+									<label for="min_price" style="margin-top: 11px; width: 50%; margin-left: 5px;">Cena
 										od:</label>
-									<input type="number" id="rate" name="rate">
+									<input type="number" placeholder="0.00" min="0" step="0.01" id="min_price"
+										name="min_price" {% if criteria.min_price %} value="{{ criteria.min_price }}" {%
+										endif %}>
 
-									<label for="rate2" style="margin-top: 11px;">do:</label>
-									<input type="number" id="rate2" name="rate2">
+									<label for="max_price" style="margin-top: 11px;">do:</label>
+									<input type="number" placeholder="0.00" min="0" step="0.01" id="max_price"
+										name="max_price" {% if criteria.max_price %} value="{{ criteria.max_price }}" {%
+										endif %}>
 
 								</div>
 
 								<div class="mx-3 my-2">
 
-									<label for="sort">Sortuj według:</label>
+									<label for="sort_by">Sortuj według:</label>
 
-									<select name="sort" id="sort">
-										<option value="alfabet">Alfabetycznie A-Z</option>
-										<option value="cenaros">Cena rosnąco</option>
-										<option value="cenamal">Cena malejąco</option>
-										<option value="popularność">Popularność</option>
+									<select name="sort_by" id="sort_by">
+										<option value="a_to_z" {% if criteria.sort_by=="a_to_z" %}selected{% endif %}>
+											Alfabetycznie A-Z</option>
+										<option value="price_asc" {% if criteria.sort_by=="price_asc" %}selected{% endif
+											%}>Cena rosnąco</option>
+										<option value="price_desc" {% if criteria.sort_by=="price_desc" %}selected{%
+											endif %}>Cena malejąco</option>
 									</select>
 								</div>
-							</div>
-
-							<div class="row">
-								<div class="my-2">
-									<label class="buttonCheckbox">
-										<span type="button" class="btn px-1 py-0">Tylko dostępne:</span>
-										<input type="checkbox" name="flag">
-									</label>
-								</div>
 
 								<div class="my-2">
-									<button id="filter" type="button" class="btn pt-2 pb-2 button">Filtruj</button>
+									<button id="filter" type="submit" class="btn pt-2 pb-2 button">Filtruj</button>
 								</div>
 							</div>
 
@@ -93,24 +92,26 @@
 
 					<div class="scrollarea">
 						{% for book in books %}
-						<div class="row ml-5">
+						<div class="ml-5">
 
-							<article class=" mt-4 mb-4 row">
-								<button type="button" class='row'>
-									<div class="col-1">
-										<img class="w-100" src="static/img/example.png"></img>
+							<article class="mt-4 mb-4 row">
+								<button type="button" class='row col-12' onclick="">
+									<div class="col-2">
+										<img class="w-100" src="{{book.link_img}}"></img>
 									</div>
 
-									<div class="col-8 m-auto">
-										<h5 style="font-weight: 600;">{{book.data.title}}</h5>
+									<div class="col-7 mt-3">
+										<a style="color: #000" href="{{book.link}}">
+											<h5 style="font-weight: 600;">{{book.data.title}}</h5>
+										</a>
 
-										<p style="font-size:13; font-weight: 400;">{{book.description}}{% if book.link
-											%}; Link: <a href="{{book.link}}">{{book.link}}</a>{% endif %}</p>
+										<p style="font-size:13; font-weight: 400;"><b>Autor: </b>{{book.data.author}}
+										</p>
 									</div>
 
-									<div class="col-3 m-auto price">
+									<div class="col-3 mt-3">
 										{% if book.available %}
-										<h5>€{{book.data.price | trim_end_matches(pat="00") }}</h5>
+										<h5>{{ book.data.price | replace(from=".", to=",") }} zł</h5>
 										<p style="color: #12D251">Dostępny</p>
 										{% else %}
 										<h5>-</h5>
@@ -118,6 +119,7 @@
 										{% endif %}
 									</div>
 								</button>
+
 								<div class="divider mt-4"></div>
 
 							</article>
@@ -145,19 +147,13 @@
 									<p>Cena:</p>
 								</div>
 								<div class='row'>
-									<p>Ocena:</p>
-								</div>
-								<div class='row'>
 									<p>Wydawnictwo:</p>
 								</div>
 							</div>
 
 							<div class='col-2 ml-5'>
 								<div class='row'>
-									<h6 class='value'>€84,34</h6>
-								</div>
-								<div class='row'>
-									<h6 class='value'>86,34</h6>
+									<h6 class='value'>84,34zł</h6>
 								</div>
 								<div class='row'>
 									<h6 class='value'>Lorem</h6>
@@ -176,7 +172,7 @@
 								<p>Autor:</p>
 							</div>
 							<div class='row'>
-								<p>Data premiery:</p>
+								<p>Rok wydania:</p>
 							</div>
 							<div class='row'>
 								<p>Liczba stron:</p>
@@ -185,7 +181,7 @@
 								<p>Okładka:</p>
 							</div>
 							<div class='row'>
-								<p>Język:</p>
+								<p>Seria:</p>
 							</div>
 						</div>
 
@@ -194,7 +190,7 @@
 								<h6 class='value'>Jan Kowalski</h6>
 							</div>
 							<div class='row'>
-								<h6 class='value'>2021-03-17</h6>
+								<h6 class='value'>2021</h6>
 							</div>
 							<div class='row'>
 								<h6 class='value'>245</h6>
@@ -203,12 +199,16 @@
 								<h6 class='value'>Twarda</h6>
 							</div>
 							<div class='row'>
-								<h6 class='value'>Polski</h6>
+								<h6 class='value'>Lorem</h6>
 							</div>
 						</div>
 					</div>
 
 					<p class='availability' style="color: #E13521">Niedostępny</p>
+					<!-- 
+					<p class='availability' style="color: #12D251">Dostępny</p>
+					<p class='availability' style="color: #5E5E5E">-</p> 
+					-->
 
 					<div class="mt-4 row">
 						<button href='#' type="button" class="btn pt-2 pb-2 button mx-auto">Przejdź do strony w
@@ -260,7 +260,8 @@
 		<!-- Copyright -->
 
 	</footer>
-
+	<script src="https://unpkg.com/mithril/mithril.js"></script>
+	<script src="static/js/frontend.js"></script>
 	<script src="https://kit.fontawesome.com/e6c92d3f6a.js" crossorigin="anonymous"></script>
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js"
 		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>

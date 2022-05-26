@@ -1,7 +1,8 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
-use sqlx::FromRow;
-
+use sqlx::Postgres;
+mod filter;
+pub use filter::{SearchCriteria, SortBy};
 /// Struct representing book data as it exists in the DB.
 #[derive(Serialize, Deserialize, Debug, sqlx::FromRow)]
 pub struct BookData {
@@ -17,6 +18,7 @@ pub struct BookData {
     pub cover: String,
     /// URL pointing at the store page to buy the book.
     pub shop_url: String,
+    pub img_url: String,
 }
 
 /// Struct for displaying the full book data.
@@ -26,6 +28,7 @@ pub struct Book {
     pub description: String,
     pub available: bool,
     pub link: Option<String>,
+    pub link_img: Option<String>,
 }
 // Helper function for possibly missing fields.
 fn hyphenize_empty(string: &str) -> String {
@@ -38,6 +41,7 @@ fn hyphenize_empty(string: &str) -> String {
 impl From<BookData> for Book {
     fn from(data: BookData) -> Self {
         let mut data = data;
+        data.price = data.price.round_dp(2); // remove trailing zeroes from prices
         let available = data.price != Decimal::NEGATIVE_ONE;
         let description = {
             let price_text = if data.price == Decimal::NEGATIVE_ONE {
@@ -71,11 +75,17 @@ impl From<BookData> for Book {
         } else {
             Some(data.shop_url.to_owned())
         };
+        let link_img = if data.img_url.is_empty() {
+            None
+        } else {
+            Some(data.img_url.to_owned())
+        };
         Self {
             data,
             description,
             available,
             link,
+            link_img,
         }
     }
 }
@@ -89,26 +99,39 @@ impl BookRepository {
             conn_pool: connection_pool,
         }
     }
-
-    pub async fn get_books(&self) -> Result<Vec<Book>, String> {
+    pub async fn get_books(&self, criteria: SearchCriteria) -> Result<Vec<Book>, String> {
         let mut conn = match self.conn_pool.acquire().await {
             Ok(c) => c,
             Err(e) => return Err(e.to_string()),
         };
-        let stream = match sqlx::query("SELECT * FROM k_data;")
+        let sort_by = match criteria.sort_by.unwrap_or_default() {
+            SortBy::Alphabetically => "title",
+            SortBy::PriceAscending => "price",
+            SortBy::PriceDescending => "price DESC",
+        };
+        let sql_string =
+            "SELECT * FROM k_data WHERE price BETWEEN $1 AND $2 AND LOWER(title) ~ $3 ORDER BY "
+                .to_owned()
+                + sort_by
+                + ";";
+        let books = match sqlx::query_as::<Postgres, BookData>(&sql_string)
+            .bind(criteria.min_price.unwrap_or(Decimal::ZERO))
+            .bind(criteria.max_price.unwrap_or(Decimal::MAX))
+            .bind(
+                criteria
+                    .title_contains
+                    .unwrap_or(String::new())
+                    .to_lowercase(),
+            )
             .fetch_all(&mut conn)
             .await
         {
             Ok(rows) => rows,
             Err(e) => return Err(e.to_string()),
-        };
-        let books = stream
-            .into_iter()
-            .map(|row| {
-                BookData::from_row(&row).expect("Book data could not be gotten from Postgres row.")
-            })
-            .map(|data| Book::from(data))
-            .collect::<Vec<_>>();
+        }
+        .into_iter()
+        .map(|data| Book::from(data))
+        .collect::<Vec<_>>();
         Ok(books)
     }
 }

@@ -1,59 +1,10 @@
 use std::{net::SocketAddr, sync::Arc};
 
-use axum::{
-    body::{self, Empty, Full},
-    extract::Path,
-    http::{header, HeaderValue, Response, StatusCode},
-    response::{Html, IntoResponse},
-    routing::get,
-    Extension, Router,
-};
-use book_renderer::data::{Book, BookData, BookRepository};
-use include_dir::{include_dir, Dir};
-use tera::{Context, Tera};
-
-// Static file serving.
-static STATICS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/static/");
-async fn serve_statics(Path(path): Path<String>) -> impl IntoResponse {
-    let path = path.trim_start_matches('/');
-    let mime_type = mime_guess::from_path(path).first_or_text_plain();
-
-    match STATICS_DIR.get_file(path) {
-        None => Response::builder()
-            .status(StatusCode::NOT_FOUND)
-            .body(body::boxed(Empty::new()))
-            .unwrap(),
-        Some(file) => Response::builder()
-            .status(StatusCode::OK)
-            .header(
-                header::CONTENT_TYPE,
-                HeaderValue::from_str(mime_type.as_ref()).unwrap(),
-            )
-            .body(body::boxed(Full::from(file.contents())))
-            .unwrap(),
-    }
-}
-
-async fn serve_index(
-    Extension(renderer): Extension<Tera>,
-    Extension(repo): Extension<Arc<BookRepository>>,
-) -> impl IntoResponse {
-    let books = match repo.get_books().await {
-        Ok(books) => books,
-        Err(e) => {
-            return Html(format!(
-                "<h1>ERROR</h1><p>Error retrieving book data: {}</p>",
-                e
-            ))
-        }
-    };
-    let mut ctx = tera::Context::new();
-    ctx.insert("books", &books);
-    let html_string = renderer.render("index.html", &ctx).unwrap_or(
-        "<h1>ERROR</h1><p>Error rendering HTML template. Consult main.rs.</p>".to_string(),
-    );
-    Html(html_string)
-}
+use axum::{routing::get, Extension, Router};
+use book_renderer::data::BookRepository;
+use tera::Tera;
+mod routes;
+use routes::*;
 
 #[tokio::main]
 async fn main() {
@@ -88,7 +39,9 @@ async fn main() {
         port_string.replace("0.0.0.0", "127.0.0.1")
     );
     let app = Router::new()
-        .route("/", get(serve_index))
+        .route("/", get(index_redirect))
+        .route("/books", get(books_view))
+        .route("/api/books", get(books_json))
         .route("/static/*path", get(serve_statics))
         .layer(Extension(tera))
         .layer(Extension(repo));
